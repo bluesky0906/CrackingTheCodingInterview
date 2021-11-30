@@ -1,0 +1,26 @@
+CC=g++ -g
+RM=rm
+CFLAGS= -I.
+HEADERS= $(wildcard *.cpp) $(wildcard *.h)
+OBJS= FixedMultiStack.o
+OBJSPLUS= $(OBJS) main.o
+BUILDDIR=build
+.SUFFIXES: .cpp .o
+
+.PHONY: clean
+
+.cpp.o: $(HEADERS)
+	@if [ ! -e ${BUILDDIR} ]; then mkdir build; fi
+	$(CC) -c $(CFLAGS) $< -o ${BUILDDIR}/$@
+
+all: main
+	./${BUILDDIR}/main
+
+main: $(OBJSPLUS) main.o
+	$(CC) -o ${BUILDDIR}/$@ $(addprefix ${BUILDDIR}/, $^) -lcurses
+
+debug: $(OBJSPLUS) log.o ${BUILDDIR}/main.o
+	$(CC) -o $@ $^ -lcurses
+
+clean:
+	$(RM) -rf build/ make debug
